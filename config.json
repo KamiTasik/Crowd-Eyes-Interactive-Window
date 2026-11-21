@@ -15,14 +15,14 @@
       "pack": "2r",
       "label": "Striped left",
       "fit": {
-        "scale": 1.2,
+        "scale": 1.22,
         "tx": 0.0,
-        "ty": 0.04
+        "ty": 0.08
       },
       "cx": 0.1231,
-      "cy": 0.124,
-      "width": 0.0857,
-      "height": 0.0362
+      "cy": 0.1385,
+      "width": 0.0956,
+      "height": 0.0579
     },
     {
       "id": "man",

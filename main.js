@@ -99,6 +99,18 @@ async function setup() {
     const img = document.createElement("img");
     img.alt = "";
     img.draggable = false;
+    const fit = fig.fit || {};
+    const scale = fit.scale ?? 1;
+    const tx = fit.tx ?? 0;
+    const ty = fit.ty ?? 0;
+    // object-position shifts which part of the eye plate shows through the socket
+    const ox = 50 + tx * 100;
+    const oy = 50 + ty * 100;
+    img.style.objectPosition = `${ox}% ${oy}%`;
+    if (scale !== 1) {
+      img.style.transform = `scale(${scale})`;
+      img.style.transformOrigin = "center center";
+    }
     slot.appendChild(img);
     eyesRoot.appendChild(slot);
 

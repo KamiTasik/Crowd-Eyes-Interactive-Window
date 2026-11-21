@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Flatten drawing onto white and punch elliptical socket cutouts from config + eye seeds."""
+"""Flatten drawing onto white and punch elliptical socket cutouts from eye seeds.
+
+Preserves pack / label / fit from config.json; rewrites cx/cy/width/height from seeds.
+"""
 
 from __future__ import annotations
 
@@ -16,25 +19,40 @@ CFG = ROOT / "config.json"
 # Per-figure left/right eye centers (normalized) and ellipse size
 EYES = {
     "left": {"pair": [(0.1026, 0.1234), (0.1437, 0.1246)], "ew": 0.028, "eh": 0.022},
-    "man": {"pair": [(0.3126, 0.0938), (0.3532, 0.0913)], "ew": 0.028, "eh": 0.022},
+    "man": {"pair": [(0.3126, 0.0938), (0.3532, 0.0913)], "ew": 0.034, "eh": 0.028},
     "mid": {"pair": [(0.3960, 0.1833), (0.4361, 0.1784)], "ew": 0.027, "eh": 0.021},
-    "woman": {"pair": [(0.5691, 0.1839), (0.6050, 0.1790)], "ew": 0.026, "eh": 0.020},
+    "woman": {"pair": [(0.5691, 0.1839), (0.6050, 0.1790)], "ew": 0.038, "eh": 0.032},
     "boy": {"pair": [(0.7111, 0.2450), (0.7453, 0.2444)], "ew": 0.026, "eh": 0.022},
-    "right": {"pair": [(0.8385, 0.1512), (0.8761, 0.1524)], "ew": 0.028, "eh": 0.022},
+    "right": {"pair": [(0.8385, 0.1512), (0.8761, 0.1524)], "ew": 0.038, "eh": 0.032},
+},
+    "man": {"pair": [(0.3126, 0.0938), (0.3532, 0.0913)], "ew": 0.034, "eh": 0.028},
+    "mid": {"pair": [(0.3960, 0.1833), (0.4361, 0.1784)], "ew": 0.027, "eh": 0.021},
+    "woman": {"pair": [(0.578, 0.195), (0.616, 0.191)], "ew": 0.036, "eh": 0.030},
+    "boy": {"pair": [(0.7111, 0.2450), (0.7453, 0.2444)], "ew": 0.026, "eh": 0.022},
+    "right": {"pair": [(0.8385, 0.1512), (0.8761, 0.1524)], "ew": 0.036, "eh": 0.030},
+},
+    "man": {"pair": [(0.3126, 0.0938), (0.3532, 0.0913)], "ew": 0.033, "eh": 0.027},
+    "mid": {"pair": [(0.3960, 0.1833), (0.4361, 0.1784)], "ew": 0.027, "eh": 0.021},
+    "woman": {"pair": [(0.576, 0.192), (0.614, 0.188)], "ew": 0.033, "eh": 0.027},
+    "boy": {"pair": [(0.7111, 0.2450), (0.7453, 0.2444)], "ew": 0.026, "eh": 0.022},
+    "right": {"pair": [(0.848, 0.162), (0.888, 0.164)], "ew": 0.034, "eh": 0.028},
 }
+ORDER = ["left", "man", "mid", "woman", "boy", "right"]
 
 
 def main() -> None:
     if not ORIG.exists():
         raise SystemExit(f"Missing {ORIG} — keep a copy of the uncut drawing there.")
     cfg = json.loads(CFG.read_text())
+    by_id = {f["id"]: f for f in cfg["figures"]}
     src = Image.open(ORIG).convert("RGBA")
     w, h = src.size
     mask = Image.new("L", (w, h), 255)
     md = ImageDraw.Draw(mask)
     figures = []
-    for fig in cfg["figures"]:
-        meta = EYES[fig["id"]]
+    for fid in ORDER:
+        meta = EYES[fid]
+        prev = by_id.get(fid, {})
         boxes = []
         for cx, cy in meta["pair"]:
             ew, eh = meta["ew"] * w, meta["eh"] * h
@@ -45,15 +63,17 @@ def main() -> None:
         top = min(b[1] for b in boxes)
         right = max(b[2] for b in boxes)
         bot = max(b[3] for b in boxes)
-        pad_x = (right - left) * 0.10
-        pad_y = (bot - top) * 0.22
+        pad_x = (right - left) * 0.12
+        pad_y = (bot - top) * 0.28
         left -= pad_x
         right += pad_x
         top -= pad_y
         bot += pad_y
+        keep = {k: prev[k] for k in ("pack", "label", "fit") if k in prev}
         figures.append(
             {
-                **{k: fig[k] for k in ("id", "pack", "label")},
+                "id": fid,
+                **keep,
                 "cx": round(((left + right) / 2) / w, 4),
                 "cy": round(((top + bot) / 2) / h, 4),
                 "width": round((right - left) / w, 4),

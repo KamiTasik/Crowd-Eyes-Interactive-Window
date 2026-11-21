@@ -4,7 +4,7 @@ Browser adaptation of Kamila Tasimenova’s AMT thesis crowd installation.
 
 **A4 landscape drawing** (white background) with **six** eye animations behind the figures. Transparent socket cutouts in the drawing let the eye packs show through from underneath. Eyes stay closed until the visitor **holds** the trackpad/mouse or a key; release closes them.
 
-The three physically installed figures (Man, Woman, Boy) keep packs 1 / 3 / 2. The three additional painted figures reuse those packs mixed: left→2, mid→1, right→3.
+Pack map (left→right): red-tinted pack 2 · pack 2 (green sockets on the tall man) · pack 1 · pack 3 (Lady, scaled/shifted) · pack 1 · blue-tinted pack 3. Hue variants live in `assets/packs/2r` and `assets/packs/3b`. Per-figure `fit` in `config.json` scales/shifts the plate inside each socket.
 
 Same publish path as [Gaze-Interactive-Window](https://github.com/KamiTasik/Gaze-Interactive-Window): **GitHub Pages → iframe on Cargo**.
 

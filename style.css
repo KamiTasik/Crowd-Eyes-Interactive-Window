@@ -78,6 +78,7 @@ body {
   object-fit: cover;
   object-position: center;
   display: block;
+  will-change: transform;
 }
 
 /* Outline markers only — eyes stay under the drawing */

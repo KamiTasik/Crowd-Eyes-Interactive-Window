@@ -12,57 +12,87 @@
   "figures": [
     {
       "id": "left",
-      "pack": "2",
+      "pack": "2r",
       "label": "Striped left",
+      "fit": {
+        "scale": 1.2,
+        "tx": 0.0,
+        "ty": 0.04
+      },
       "cx": 0.1231,
       "cy": 0.124,
-      "width": 0.0829,
-      "height": 0.0334
+      "width": 0.0857,
+      "height": 0.0362
     },
     {
       "id": "man",
-      "pack": "1",
+      "pack": "2",
       "label": "Man",
+      "fit": {
+        "scale": 1.28,
+        "tx": 0.02,
+        "ty": 0.08
+      },
       "cx": 0.3329,
       "cy": 0.0926,
-      "width": 0.0823,
-      "height": 0.0353
+      "width": 0.0925,
+      "height": 0.0476
     },
     {
       "id": "mid",
       "pack": "1",
       "label": "Mid",
+      "fit": {
+        "scale": 1.05,
+        "tx": 0.0,
+        "ty": 0.02
+      },
       "cx": 0.4161,
       "cy": 0.1809,
-      "width": 0.0805,
-      "height": 0.0373
+      "width": 0.0832,
+      "height": 0.0404
     },
     {
       "id": "woman",
       "pack": "3",
       "label": "Woman",
+      "fit": {
+        "scale": 1.4,
+        "tx": 0.08,
+        "ty": 0.14
+      },
       "cx": 0.587,
       "cy": 0.1815,
-      "width": 0.0743,
-      "height": 0.0359
+      "width": 0.095,
+      "height": 0.055
     },
     {
       "id": "boy",
-      "pack": "2",
+      "pack": "1",
       "label": "Boy",
+      "fit": {
+        "scale": 1.25,
+        "tx": 0.02,
+        "ty": 0.06
+      },
       "cx": 0.7282,
       "cy": 0.2447,
-      "width": 0.0722,
-      "height": 0.034
+      "width": 0.0806,
+      "height": 0.0406
     },
     {
       "id": "right",
-      "pack": "3",
+      "pack": "3b",
       "label": "Striped right",
+      "fit": {
+        "scale": 1.55,
+        "tx": 0.1,
+        "ty": 0.16
+      },
       "cx": 0.8573,
       "cy": 0.1518,
-      "width": 0.0787,
-      "height": 0.0334
+      "width": 0.095,
+      "height": 0.052
     }
   ]
 }

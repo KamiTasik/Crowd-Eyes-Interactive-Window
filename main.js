@@ -1,7 +1,7 @@
 /**
  * Crowd Eyes — Cargo / GitHub Pages web adaptation
  * Hold pointer or key → open all animated eyes; release → close.
- * Packs are full-A4 frames with eyes painted into each figure window.
+ * Slots use alignment-window coordinates; pack frames are used as-is.
  */
 
 const statusEl = document.getElementById("status");
@@ -102,53 +102,38 @@ async function setup() {
   }
 
   for (const fig of config.figures) {
-    const fullBleed = fig.fullBleed || (fig.width >= 0.99 && fig.height >= 0.99);
     const slot = document.createElement("div");
-    slot.className = fullBleed ? "eye-slot eye-slot--full" : "eye-slot";
+    slot.className = "eye-slot";
     slot.dataset.id = fig.id;
     slot.title = fig.label || fig.id;
-
-    if (fullBleed) {
-      slot.style.left = "0";
-      slot.style.top = "0";
-      slot.style.width = "100%";
-      slot.style.height = "100%";
-      slot.style.transform = "none";
-    } else {
-      slot.style.left = `${fig.cx * 100}%`;
-      slot.style.top = `${fig.cy * 100}%`;
-      slot.style.width = `${fig.width * 100}%`;
-      slot.style.height = `${fig.height * 100}%`;
-    }
+    slot.style.left = `${fig.cx * 100}%`;
+    slot.style.top = `${fig.cy * 100}%`;
+    slot.style.width = `${fig.width * 100}%`;
+    slot.style.height = `${fig.height * 100}%`;
 
     const img = document.createElement("img");
     img.alt = "";
     img.draggable = false;
-    if (!fullBleed) {
-      const fit = fig.fit || {};
-      const scale = fit.scale ?? 1;
-      const tx = fit.tx ?? 0;
-      const ty = fit.ty ?? 0;
-      const ox = 50 + tx * 100;
-      const oy = 50 + ty * 100;
-      img.style.objectPosition = `${ox}% ${oy}%`;
-      if (scale !== 1) {
-        img.style.transform = `scale(${scale})`;
-        img.style.transformOrigin = "center center";
-      }
+    const fit = fig.fit || {};
+    const scale = fit.scale ?? 1;
+    const tx = fit.tx ?? 0;
+    const ty = fit.ty ?? 0;
+    img.style.objectPosition = `${50 + tx * 100}% ${50 + ty * 100}%`;
+    if (scale !== 1) {
+      img.style.transform = `scale(${scale})`;
+      img.style.transformOrigin = "center center";
     }
     slot.appendChild(img);
     eyesRoot.appendChild(slot);
 
     if (debug && debugOverlay) {
-      const win = fig.window || fig;
       const box = document.createElement("div");
       box.className = "debug-box";
       box.title = fig.label || fig.id;
-      box.style.left = `${win.cx * 100}%`;
-      box.style.top = `${win.cy * 100}%`;
-      box.style.width = `${win.width * 100}%`;
-      box.style.height = `${win.height * 100}%`;
+      box.style.left = `${fig.cx * 100}%`;
+      box.style.top = `${fig.cy * 100}%`;
+      box.style.width = `${fig.width * 100}%`;
+      box.style.height = `${fig.height * 100}%`;
       debugOverlay.appendChild(box);
     }
 

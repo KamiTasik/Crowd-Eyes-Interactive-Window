@@ -34,7 +34,7 @@ body {
   padding: 0.5rem;
 }
 
-/* A4 landscape frame (√2) — letterboxed in the viewport */
+/* A4 landscape frame — letterboxed in the viewport */
 .stage {
   position: relative;
   width: min(100%, calc((100dvh - 3rem) * 1.41421356237));
@@ -44,7 +44,7 @@ body {
   overflow: hidden;
 }
 
-/* Eye animations sit under the drawing and show through socket cutouts */
+/* Eye animations sit under the drawing and show through your cutouts */
 .eyes {
   position: absolute;
   inset: 0;
@@ -68,15 +68,6 @@ body {
   position: absolute;
   transform: translate(-50%, -50%);
   overflow: hidden;
-  border-radius: 40% / 48%;
-}
-
-/* Full-A4 underlay: eyes already painted into window positions */
-.eye-slot--full {
-  transform: none;
-  border-radius: 0;
-  overflow: visible;
-  pointer-events: none;
 }
 
 .eye-slot img {
@@ -88,13 +79,6 @@ body {
   will-change: transform;
 }
 
-.eye-slot--full img {
-  object-fit: fill;
-  /* Pack frames are black outside the eye window — lighten keeps siblings visible */
-  mix-blend-mode: lighten;
-}
-
-/* Outline markers only — eyes stay under the drawing */
 .debug-overlay {
   position: absolute;
   inset: 0;
@@ -105,9 +89,8 @@ body {
 .debug-overlay .debug-box {
   position: absolute;
   transform: translate(-50%, -50%);
-  border: 1.5px solid rgba(0, 160, 130, 0.95);
+  border: 1.5px solid rgba(0, 200, 160, 0.95);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.75);
-  border-radius: 40% / 48%;
 }
 
 .hint {

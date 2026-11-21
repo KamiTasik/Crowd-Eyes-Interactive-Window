@@ -4,6 +4,9 @@ __pycache__/
 *.pyc
 .idea/
 .vscode/
+# Keep local source artwork out of the public repo
 assets/drawing-original.png
 assets/packs/*/_*.jpg
-assets/packs/*/_*.jpg
+*.psd
+*.tif
+*.tiff

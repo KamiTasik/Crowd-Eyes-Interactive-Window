@@ -1,0 +1,41 @@
+{
+  "canvas": {
+    "width": 3508,
+    "height": 2480,
+    "label": "A4 landscape"
+  },
+  "interaction": {
+    "mode": "hold",
+    "openMs": 350,
+    "closeMs": 280
+  },
+  "figures": [
+    {
+      "id": "man",
+      "pack": "1",
+      "label": "Man",
+      "cx": 0.3328,
+      "cy": 0.0932,
+      "width": 0.078,
+      "height": 0.048
+    },
+    {
+      "id": "woman",
+      "pack": "3",
+      "label": "Woman",
+      "cx": 0.5871,
+      "cy": 0.1817,
+      "width": 0.072,
+      "height": 0.042
+    },
+    {
+      "id": "boy",
+      "pack": "2",
+      "label": "Boy",
+      "cx": 0.7297,
+      "cy": 0.2453,
+      "width": 0.074,
+      "height": 0.052
+    }
+  ]
+}

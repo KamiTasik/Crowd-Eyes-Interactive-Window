@@ -1,0 +1,165 @@
+/**
+ * Crowd Eyes — Cargo / GitHub Pages web adaptation
+ * Hold pointer or key → open all animated eyes; release → close.
+ * Eye slots are positioned in % of the A4 landscape drawing (config.json).
+ */
+
+const statusEl = document.getElementById("status");
+const hintEl = document.getElementById("hint");
+const app = document.getElementById("app");
+const eyesRoot = document.getElementById("eyes");
+
+/** @type {Map<string, { frames: HTMLImageElement[], index: number, open: boolean, animating: boolean, img: HTMLImageElement, openMs: number, closeMs: number }>} */
+const players = new Map();
+const activePointers = new Set();
+let keysDown = 0;
+let eyesOpen = false;
+let config = null;
+
+function setStatus(t) {
+  if (statusEl) statusEl.textContent = t;
+}
+
+function showFrame(id, i) {
+  const p = players.get(id);
+  if (!p?.frames?.length) return;
+  p.index = Math.max(0, Math.min(p.frames.length - 1, i));
+  p.img.src = p.frames[p.index].src;
+}
+
+function animateFigure(id, open) {
+  const p = players.get(id);
+  if (!p?.frames?.length) return;
+  if (p.open === open && !p.animating) {
+    showFrame(id, open ? p.frames.length - 1 : 0);
+    return;
+  }
+  p.open = open;
+  const from = p.index;
+  const to = open ? p.frames.length - 1 : 0;
+  const duration = open ? p.openMs : p.closeMs;
+  if (from === to) return;
+  p.animating = true;
+  const start = performance.now();
+  function tick(now) {
+    const t = Math.min(1, (now - start) / duration);
+    showFrame(id, Math.round(from + (to - from) * t));
+    if (t < 1) requestAnimationFrame(tick);
+    else {
+      showFrame(id, to);
+      p.animating = false;
+    }
+  }
+  requestAnimationFrame(tick);
+}
+
+function syncOpenState() {
+  const open = activePointers.size > 0 || keysDown > 0;
+  if (open === eyesOpen) return;
+  eyesOpen = open;
+  app.classList.toggle("is-open", open);
+  document.getElementById("stage")?.setAttribute("data-open", open ? "true" : "false");
+  if (hintEl) {
+    hintEl.textContent = open ? "Holding — eyes open" : "Press & hold · or hold a key";
+  }
+  for (const id of players.keys()) animateFigure(id, open);
+}
+
+async function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error(`Failed to load ${src}`));
+    el.src = src;
+  });
+}
+
+async function setup() {
+  config = await fetch("./config.json", { cache: "no-store" }).then((r) => r.json());
+  const openMs = config.interaction?.openMs ?? 350;
+  const closeMs = config.interaction?.closeMs ?? 280;
+  const debug = new URLSearchParams(location.search).get("debug") === "1";
+  if (debug) document.documentElement.classList.add("debug-slots");
+
+  for (const fig of config.figures) {
+    const slot = document.createElement("div");
+    slot.className = "eye-slot";
+    slot.dataset.id = fig.id;
+    slot.title = fig.label || fig.id;
+    slot.style.left = `${fig.cx * 100}%`;
+    slot.style.top = `${fig.cy * 100}%`;
+    slot.style.width = `${fig.width * 100}%`;
+    slot.style.height = `${fig.height * 100}%`;
+
+    const img = document.createElement("img");
+    img.alt = "";
+    img.draggable = false;
+    slot.appendChild(img);
+    eyesRoot.appendChild(slot);
+
+    const closed = await loadImage(`assets/packs/${fig.pack}/00.jpg`);
+    const opened = await loadImage(`assets/packs/${fig.pack}/01.jpg`);
+    players.set(fig.id, {
+      frames: [closed, opened],
+      index: 0,
+      open: false,
+      animating: false,
+      img,
+      openMs,
+      closeMs,
+    });
+    img.src = closed.src;
+  }
+
+  setStatus("Ready");
+  app.focus();
+}
+
+function onPointerDown(e) {
+  activePointers.add(e.pointerId);
+  syncOpenState();
+  try {
+    app.setPointerCapture(e.pointerId);
+  } catch {
+    /* ignore */
+  }
+  e.preventDefault();
+}
+
+function onPointerUp(e) {
+  activePointers.delete(e.pointerId);
+  syncOpenState();
+  e.preventDefault();
+}
+
+function onKeyDown(e) {
+  if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
+  keysDown += 1;
+  syncOpenState();
+  e.preventDefault();
+}
+
+function onKeyUp(e) {
+  keysDown = Math.max(0, keysDown - 1);
+  syncOpenState();
+  e.preventDefault();
+}
+
+app.addEventListener("pointerdown", onPointerDown, { passive: false });
+app.addEventListener("pointerup", onPointerUp, { passive: false });
+app.addEventListener("pointercancel", onPointerUp, { passive: false });
+window.addEventListener("keydown", onKeyDown);
+window.addEventListener("keyup", onKeyUp);
+window.addEventListener("blur", () => {
+  activePointers.clear();
+  keysDown = 0;
+  syncOpenState();
+});
+
+document.addEventListener("gesturestart", (e) => e.preventDefault(), { passive: false });
+document.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+
+setup().catch((err) => {
+  setStatus("Load error");
+  console.error(err);
+});

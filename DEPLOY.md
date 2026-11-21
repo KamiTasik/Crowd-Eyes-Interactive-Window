@@ -45,7 +45,7 @@ Test: hold trackpad or a key → eyes open; release → close.
   border: 0;
   display: block;
   overflow: hidden;
-  background: #fff;
+  background: #000;
 }
 ```
 

@@ -6,92 +6,134 @@
   },
   "interaction": {
     "mode": "hold",
-    "openMs": 350,
-    "closeMs": 280
+    "openMs": 600,
+    "closeMs": 400
   },
   "figures": [
     {
       "id": "fig1",
-      "pack": "1",
       "label": "Figure 1",
-      "cx": 0.14,
-      "cy": 0.14,
-      "width": 0.08,
-      "height": 0.04,
+      "pack": "fig1",
+      "cx": 0.5,
+      "cy": 0.5,
+      "width": 1.0,
+      "height": 1.0,
       "fit": {
         "scale": 1.0,
-        "tx": 0,
-        "ty": 0
+        "tx": 0.0,
+        "ty": 0.0
+      },
+      "fullBleed": true,
+      "window": {
+        "cx": 0.12044628574205396,
+        "cy": 0.13166310249538277,
+        "width": 0.08722919042189281,
+        "height": 0.10685483870967742
       }
     },
     {
       "id": "fig2",
-      "pack": "2",
-      "label": "Figure 2",
-      "cx": 0.33,
-      "cy": 0.12,
-      "width": 0.08,
-      "height": 0.04,
+      "label": "Man",
+      "pack": "fig2",
+      "cx": 0.5,
+      "cy": 0.5,
+      "width": 1.0,
+      "height": 1.0,
       "fit": {
         "scale": 1.0,
-        "tx": 0,
-        "ty": 0
+        "tx": 0.0,
+        "ty": 0.0
+      },
+      "fullBleed": true,
+      "window": {
+        "cx": 0.3327916806348943,
+        "cy": 0.09338635184330336,
+        "width": 0.07411630558722919,
+        "height": 0.07419354838709677
       }
     },
     {
       "id": "fig3",
-      "pack": "3",
       "label": "Figure 3",
-      "cx": 0.42,
-      "cy": 0.18,
-      "width": 0.08,
-      "height": 0.04,
+      "pack": "fig3",
+      "cx": 0.5,
+      "cy": 0.5,
+      "width": 1.0,
+      "height": 1.0,
       "fit": {
         "scale": 1.0,
-        "tx": 0,
-        "ty": 0
+        "tx": 0.0,
+        "ty": 0.0
+      },
+      "fullBleed": true,
+      "window": {
+        "cx": 0.4144030117617567,
+        "cy": 0.1782670703420972,
+        "width": 0.08437856328392246,
+        "height": 0.08991935483870968
       }
     },
     {
       "id": "fig4",
-      "pack": "1",
-      "label": "Figure 4",
-      "cx": 0.58,
-      "cy": 0.18,
-      "width": 0.08,
-      "height": 0.04,
+      "label": "Woman",
+      "pack": "fig4",
+      "cx": 0.5,
+      "cy": 0.5,
+      "width": 1.0,
+      "height": 1.0,
       "fit": {
         "scale": 1.0,
-        "tx": 0,
-        "ty": 0
+        "tx": 0.0,
+        "ty": 0.0
+      },
+      "fullBleed": true,
+      "window": {
+        "cx": 0.589968686065356,
+        "cy": 0.1883035154671181,
+        "width": 0.07981755986316989,
+        "height": 0.07943548387096774
       }
     },
     {
       "id": "fig5",
-      "pack": "2",
-      "label": "Figure 5",
-      "cx": 0.72,
-      "cy": 0.24,
-      "width": 0.08,
-      "height": 0.04,
+      "label": "Boy",
+      "pack": "fig5",
+      "cx": 0.5,
+      "cy": 0.5,
+      "width": 1.0,
+      "height": 1.0,
       "fit": {
         "scale": 1.0,
-        "tx": 0,
-        "ty": 0
+        "tx": 0.0,
+        "ty": 0.0
+      },
+      "fullBleed": true,
+      "window": {
+        "cx": 0.7272014011409204,
+        "cy": 0.24334803189618434,
+        "width": 0.06641961231470923,
+        "height": 0.06612903225806452
       }
     },
     {
       "id": "fig6",
-      "pack": "3",
       "label": "Figure 6",
-      "cx": 0.86,
-      "cy": 0.16,
-      "width": 0.08,
-      "height": 0.04,
+      "pack": "fig6",
+      "cx": 0.5,
+      "cy": 0.5,
+      "width": 1.0,
+      "height": 1.0,
       "fit": {
         "scale": 1.0,
-        "tx": 0,
-        "ty": 0
+        "tx": 0.0,
+        "ty": 0.0
+      },
+      "fullBleed": true,
+      "window": {
+        "cx": 0.8585898684551491,
+        "cy": 0.152779942081805,
+        "width": 0.07554161915621437,
+        "height": 0.07903225806451612
       }
     }
   ]

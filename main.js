@@ -1,7 +1,7 @@
 /**
  * Crowd Eyes — Cargo / GitHub Pages web adaptation
  * Hold pointer or key → open all animated eyes; release → close.
- * Eye slots are positioned in % of the A4 landscape drawing (config.json).
+ * Packs are full-A4 frames with eyes painted into each figure window.
  */
 
 const statusEl = document.getElementById("status");
@@ -74,6 +74,21 @@ async function loadImage(src) {
   });
 }
 
+/** Load pack frames 00.jpg, 01.jpg, … until a file is missing. */
+async function loadPack(pack) {
+  const frames = [];
+  for (let i = 0; i < 32; i++) {
+    const src = `assets/packs/${pack}/${String(i).padStart(2, "0")}.jpg`;
+    try {
+      frames.push(await loadImage(src));
+    } catch {
+      break;
+    }
+  }
+  if (!frames.length) throw new Error(`Empty pack: ${pack}`);
+  return frames;
+}
+
 async function setup() {
   config = await fetch("./config.json", { cache: "no-store" }).then((r) => r.json());
   const openMs = config.interaction?.openMs ?? 350;
@@ -87,48 +102,59 @@ async function setup() {
   }
 
   for (const fig of config.figures) {
+    const fullBleed = fig.fullBleed || (fig.width >= 0.99 && fig.height >= 0.99);
     const slot = document.createElement("div");
-    slot.className = "eye-slot";
+    slot.className = fullBleed ? "eye-slot eye-slot--full" : "eye-slot";
     slot.dataset.id = fig.id;
     slot.title = fig.label || fig.id;
-    slot.style.left = `${fig.cx * 100}%`;
-    slot.style.top = `${fig.cy * 100}%`;
-    slot.style.width = `${fig.width * 100}%`;
-    slot.style.height = `${fig.height * 100}%`;
+
+    if (fullBleed) {
+      slot.style.left = "0";
+      slot.style.top = "0";
+      slot.style.width = "100%";
+      slot.style.height = "100%";
+      slot.style.transform = "none";
+    } else {
+      slot.style.left = `${fig.cx * 100}%`;
+      slot.style.top = `${fig.cy * 100}%`;
+      slot.style.width = `${fig.width * 100}%`;
+      slot.style.height = `${fig.height * 100}%`;
+    }
 
     const img = document.createElement("img");
     img.alt = "";
     img.draggable = false;
-    const fit = fig.fit || {};
-    const scale = fit.scale ?? 1;
-    const tx = fit.tx ?? 0;
-    const ty = fit.ty ?? 0;
-    // object-position shifts which part of the eye plate shows through the socket
-    const ox = 50 + tx * 100;
-    const oy = 50 + ty * 100;
-    img.style.objectPosition = `${ox}% ${oy}%`;
-    if (scale !== 1) {
-      img.style.transform = `scale(${scale})`;
-      img.style.transformOrigin = "center center";
+    if (!fullBleed) {
+      const fit = fig.fit || {};
+      const scale = fit.scale ?? 1;
+      const tx = fit.tx ?? 0;
+      const ty = fit.ty ?? 0;
+      const ox = 50 + tx * 100;
+      const oy = 50 + ty * 100;
+      img.style.objectPosition = `${ox}% ${oy}%`;
+      if (scale !== 1) {
+        img.style.transform = `scale(${scale})`;
+        img.style.transformOrigin = "center center";
+      }
     }
     slot.appendChild(img);
     eyesRoot.appendChild(slot);
 
     if (debug && debugOverlay) {
+      const win = fig.window || fig;
       const box = document.createElement("div");
       box.className = "debug-box";
       box.title = fig.label || fig.id;
-      box.style.left = `${fig.cx * 100}%`;
-      box.style.top = `${fig.cy * 100}%`;
-      box.style.width = `${fig.width * 100}%`;
-      box.style.height = `${fig.height * 100}%`;
+      box.style.left = `${win.cx * 100}%`;
+      box.style.top = `${win.cy * 100}%`;
+      box.style.width = `${win.width * 100}%`;
+      box.style.height = `${win.height * 100}%`;
       debugOverlay.appendChild(box);
     }
 
-    const closed = await loadImage(`assets/packs/${fig.pack}/00.jpg`);
-    const opened = await loadImage(`assets/packs/${fig.pack}/01.jpg`);
+    const frames = await loadPack(fig.pack);
     players.set(fig.id, {
-      frames: [closed, opened],
+      frames,
       index: 0,
       open: false,
       animating: false,
@@ -136,14 +162,13 @@ async function setup() {
       openMs,
       closeMs,
     });
-    img.src = closed.src;
+    img.src = frames[0].src;
   }
 
   setStatus("Ready");
   app.focus();
 
   if (forceOpen) {
-    // Preview helper: hold state without pointer (?open=1)
     keysDown = 1;
     syncOpenState();
   }

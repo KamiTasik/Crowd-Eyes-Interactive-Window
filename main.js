@@ -116,11 +116,18 @@ async function setup() {
     img.draggable = false;
     const fit = fig.fit || {};
     const scale = fit.scale ?? 1;
+    const rotate = fit.rotate ?? 0; // degrees, clockwise positive
+    const dx = fit.dx ?? 0; // translate as fraction of slot size
+    const dy = fit.dy ?? 0;
     const tx = fit.tx ?? 0;
     const ty = fit.ty ?? 0;
     img.style.objectPosition = `${50 + tx * 100}% ${50 + ty * 100}%`;
-    if (scale !== 1) {
-      img.style.transform = `scale(${scale})`;
+    const transforms = [];
+    if (dx || dy) transforms.push(`translate(${dx * 100}%, ${dy * 100}%)`);
+    if (scale !== 1) transforms.push(`scale(${scale})`);
+    if (rotate) transforms.push(`rotate(${rotate}deg)`);
+    if (transforms.length) {
+      img.style.transform = transforms.join(" ");
       img.style.transformOrigin = "center center";
     }
     slot.appendChild(img);

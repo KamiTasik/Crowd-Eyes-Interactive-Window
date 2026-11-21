@@ -2,7 +2,9 @@
 
 Browser adaptation of Kamila Tasimenova’s AMT thesis crowd installation.
 
-**A4 landscape drawing** with three eye animations (Man, Boy, Woman) aligned to the painted sockets. Eyes stay closed until the visitor **holds** the trackpad/mouse or a key; release closes them.
+**A4 landscape drawing** (white background) with **six** eye animations behind the figures. Transparent socket cutouts in the drawing let the eye packs show through from underneath. Eyes stay closed until the visitor **holds** the trackpad/mouse or a key; release closes them.
+
+The three physically installed figures (Man, Woman, Boy) keep packs 1 / 3 / 2. The three additional painted figures reuse those packs mixed: left→2, mid→1, right→3.
 
 Same publish path as [Gaze-Interactive-Window](https://github.com/KamiTasik/Gaze-Interactive-Window): **GitHub Pages → iframe on Cargo**.
 
@@ -10,13 +12,16 @@ Same publish path as [Gaze-Interactive-Window](https://github.com/KamiTasik/Gaze
 
 ```bash
 cd Crowd-Eyes-Interactive-Window
-python3 -m http.server 8080
+python3 -m http.server 8766 --bind 127.0.0.1
 ```
 
-Open http://127.0.0.1:8080  
+Open http://127.0.0.1:8766  
 Hold click/trackpad or any key to open eyes.
 
-Tune sockets: http://127.0.0.1:8080/?debug=1 and edit `config.json`.
+- Align sockets: `?debug=1`
+- Force open (screenshot / check): `?open=1`
+
+Tune positions in `config.json` (`cx` / `cy` / `width` / `height` are normalized 0–1 on the A4).
 
 ## Live
 
@@ -29,10 +34,10 @@ See **DEPLOY.md** for Cargo embed CSS.
 
 ```text
 index.html      Stage + hint
-style.css       A4 letterbox layout
+style.css       A4 letterbox; eyes under drawing
 main.js         Hold interaction + frame swap
-config.json     Per-figure cx/cy/width/height (normalized)
+config.json     Six figures · pack mix · socket slots
 assets/
-  drawing.png   Full crowd drawing (A4 landscape)
+  drawing.png   Crowd on white · transparent eye sockets
   packs/1|2|3/  00.jpg closed · 01.jpg open
 ```

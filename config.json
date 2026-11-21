@@ -11,31 +11,58 @@
   },
   "figures": [
     {
+      "id": "left",
+      "pack": "2",
+      "label": "Striped left",
+      "cx": 0.1231,
+      "cy": 0.124,
+      "width": 0.0829,
+      "height": 0.0334
+    },
+    {
       "id": "man",
       "pack": "1",
       "label": "Man",
-      "cx": 0.3328,
-      "cy": 0.0932,
-      "width": 0.078,
-      "height": 0.048
+      "cx": 0.3329,
+      "cy": 0.0926,
+      "width": 0.0823,
+      "height": 0.0353
+    },
+    {
+      "id": "mid",
+      "pack": "1",
+      "label": "Mid",
+      "cx": 0.4161,
+      "cy": 0.1809,
+      "width": 0.0805,
+      "height": 0.0373
     },
     {
       "id": "woman",
       "pack": "3",
       "label": "Woman",
-      "cx": 0.5871,
-      "cy": 0.1817,
-      "width": 0.072,
-      "height": 0.042
+      "cx": 0.587,
+      "cy": 0.1815,
+      "width": 0.0743,
+      "height": 0.0359
     },
     {
       "id": "boy",
       "pack": "2",
       "label": "Boy",
-      "cx": 0.7297,
-      "cy": 0.2453,
-      "width": 0.074,
-      "height": 0.052
+      "cx": 0.7282,
+      "cy": 0.2447,
+      "width": 0.0722,
+      "height": 0.034
+    },
+    {
+      "id": "right",
+      "pack": "3",
+      "label": "Striped right",
+      "cx": 0.8573,
+      "cy": 0.1518,
+      "width": 0.0787,
+      "height": 0.0334
     }
   ]
 }

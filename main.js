@@ -78,8 +78,13 @@ async function setup() {
   config = await fetch("./config.json", { cache: "no-store" }).then((r) => r.json());
   const openMs = config.interaction?.openMs ?? 350;
   const closeMs = config.interaction?.closeMs ?? 280;
-  const debug = new URLSearchParams(location.search).get("debug") === "1";
-  if (debug) document.documentElement.classList.add("debug-slots");
+  const params = new URLSearchParams(location.search);
+  const debug = params.get("debug") === "1";
+  const forceOpen = params.get("open") === "1";
+  const debugOverlay = document.getElementById("debugOverlay");
+  if (debug && debugOverlay) {
+    debugOverlay.hidden = false;
+  }
 
   for (const fig of config.figures) {
     const slot = document.createElement("div");
@@ -97,6 +102,17 @@ async function setup() {
     slot.appendChild(img);
     eyesRoot.appendChild(slot);
 
+    if (debug && debugOverlay) {
+      const box = document.createElement("div");
+      box.className = "debug-box";
+      box.title = fig.label || fig.id;
+      box.style.left = `${fig.cx * 100}%`;
+      box.style.top = `${fig.cy * 100}%`;
+      box.style.width = `${fig.width * 100}%`;
+      box.style.height = `${fig.height * 100}%`;
+      debugOverlay.appendChild(box);
+    }
+
     const closed = await loadImage(`assets/packs/${fig.pack}/00.jpg`);
     const opened = await loadImage(`assets/packs/${fig.pack}/01.jpg`);
     players.set(fig.id, {
@@ -113,6 +129,12 @@ async function setup() {
 
   setStatus("Ready");
   app.focus();
+
+  if (forceOpen) {
+    // Preview helper: hold state without pointer (?open=1)
+    keysDown = 1;
+    syncOpenState();
+  }
 }
 
 function onPointerDown(e) {

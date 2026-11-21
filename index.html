@@ -15,15 +15,16 @@
       <p id="status" class="visually-hidden" role="status">Loading…</p>
 
       <div class="stage-wrap">
-        <!-- A4 landscape stage: drawing + aligned eye overlays -->
+        <!-- Eyes under the A4 drawing; sockets are transparent cutouts -->
         <div class="stage" id="stage" data-open="false">
+          <div id="eyes" class="eyes" aria-hidden="true"></div>
           <img
             class="drawing"
             src="assets/drawing.png"
             alt="Crowd of figures"
             draggable="false"
           />
-          <div id="eyes" class="eyes" aria-hidden="true"></div>
+          <div id="debugOverlay" class="debug-overlay" hidden aria-hidden="true"></div>
         </div>
       </div>
 

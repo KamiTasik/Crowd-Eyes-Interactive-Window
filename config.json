@@ -6,8 +6,8 @@
   },
   "interaction": {
     "mode": "hold",
-    "openMs": 560,
-    "closeMs": 380
+    "openMs": 650,
+    "closeMs": 420
   },
   "figures": [
     {

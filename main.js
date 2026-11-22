@@ -1,6 +1,7 @@
 /**
  * Crowd Eyes — Cargo / GitHub Pages web adaptation
- * Hold Space → open all animated eyes; release → close.
+ * Desktop: hold Space → eyes open; release → close.
+ * Mobile: hold finger on screen → eyes open; lift → close.
  * Slots use alignment-window coordinates; pack frames are used as-is.
  */
 
@@ -12,11 +13,17 @@ const eyesRoot = document.getElementById("eyes");
 /** @type {Map<string, { frames: HTMLImageElement[], index: number, open: boolean, animating: boolean, img: HTMLImageElement, openMs: number, closeMs: number }>} */
 const players = new Map();
 let spaceHeld = false;
+/** @type {Set<number>} */
+const activeTouches = new Set();
 let eyesOpen = false;
 let config = null;
 
-const HINT_IDLE = "Hold Space";
-const HINT_OPEN = "Holding Space — eyes open";
+const isTouchUi =
+  window.matchMedia("(hover: none) and (pointer: coarse)").matches ||
+  navigator.maxTouchPoints > 0;
+
+const HINT_IDLE = isTouchUi ? "Press & hold" : "Hold Space";
+const HINT_OPEN = isTouchUi ? "Holding — eyes open" : "Holding Space — eyes open";
 
 function setStatus(t) {
   if (statusEl) statusEl.textContent = t;
@@ -56,7 +63,7 @@ function animateFigure(id, open) {
 }
 
 function syncOpenState() {
-  const open = spaceHeld;
+  const open = spaceHeld || activeTouches.size > 0;
   if (open === eyesOpen) return;
   eyesOpen = open;
   app.classList.toggle("is-open", open);
@@ -102,6 +109,11 @@ async function setup() {
   const debugOverlay = document.getElementById("debugOverlay");
   if (debug && debugOverlay) {
     debugOverlay.hidden = false;
+  }
+
+  if (hintEl) hintEl.textContent = HINT_IDLE;
+  if (isTouchUi) {
+    app.setAttribute("aria-label", "Press and hold the screen to open the eyes");
   }
 
   for (const fig of config.figures) {
@@ -191,12 +203,46 @@ function onKeyUp(e) {
   syncOpenState();
 }
 
+/** Touch / pen only — desktop mouse stays Space-only. */
+function isFingerPointer(e) {
+  return e.pointerType === "touch" || e.pointerType === "pen";
+}
+
+function onPointerDown(e) {
+  if (!isFingerPointer(e)) return;
+  activeTouches.add(e.pointerId);
+  syncOpenState();
+  try {
+    app.setPointerCapture(e.pointerId);
+  } catch {
+    /* ignore */
+  }
+  e.preventDefault();
+}
+
+function onPointerUp(e) {
+  if (!activeTouches.has(e.pointerId)) return;
+  activeTouches.delete(e.pointerId);
+  syncOpenState();
+  e.preventDefault();
+}
+
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
+app.addEventListener("pointerdown", onPointerDown, { passive: false });
+app.addEventListener("pointerup", onPointerUp, { passive: false });
+app.addEventListener("pointercancel", onPointerUp, { passive: false });
 window.addEventListener("blur", () => {
-  if (!spaceHeld) return;
-  spaceHeld = false;
-  syncOpenState();
+  let changed = false;
+  if (spaceHeld) {
+    spaceHeld = false;
+    changed = true;
+  }
+  if (activeTouches.size) {
+    activeTouches.clear();
+    changed = true;
+  }
+  if (changed) syncOpenState();
 });
 
 document.addEventListener("gesturestart", (e) => e.preventDefault(), { passive: false });

@@ -19,7 +19,9 @@ Repo: `https://github.com/KamiTasik/Crowd-Eyes-Interactive-Window`
 **Live URL:**  
 `https://kamitasik.github.io/Crowd-Eyes-Interactive-Window/`
 
-Test: hold Space → eyes open; release → close.
+Test:
+- Desktop: hold Space → eyes open; release → close.
+- Phone: press & hold on the drawing → eyes open; lift finger → close.
 
 ## Part 3 — Embed on Cargo
 
@@ -35,21 +37,32 @@ Test: hold Space → eyes open; release → close.
 ></iframe>
 ```
 
-3. Page CSS (replace `PAGE_ID` with your Cargo page id):
+3. Page CSS (your page id is `Q0080224726`):
 
 ```css
-[id="PAGE_ID"] .crowd-eyes-embed-frame {
+[id="Q0080224726"] bodycopy {
+	
+}
+
+[id="Q0080224726"] .crowd-eyes-embed-frame {
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
+  height: min(100dvh, calc(100vw / 1.41421356237 + 2.75rem));
   border: 0;
   display: block;
   overflow: hidden;
   background: #fff;
 }
+
+@media (max-width: 700px) {
+  [id="Q0080224726"] .crowd-eyes-embed-frame {
+    /* Fit the A4 drawing + short hint — no tall empty gap under page text */
+    height: calc(100vw / 1.41421356237 + 2rem);
+    max-height: 58vw;
+  }
+}
 ```
 
-4. Publish Cargo and test on the live page.
+4. Publish Cargo and test on the live page. On a phone, tap inside the iframe, then press and hold.
 
 ## Part 4 — Later changes
 
@@ -60,5 +73,5 @@ Test: hold Space → eyes open; release → close.
 ## Notes
 
 - Drawing is **A4 landscape**.  
-- No camera on this page — Space-bar hold only.  
+- No camera — Space on desktop, finger-hold on phone.  
 - GitHub Pages provides **HTTPS** for Cargo iframes.

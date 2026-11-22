@@ -203,13 +203,41 @@ function onKeyUp(e) {
   syncOpenState();
 }
 
-/** Touch / pen only — desktop mouse stays Space-only. */
+function releaseAllHolds() {
+  let changed = false;
+  if (spaceHeld) {
+    spaceHeld = false;
+    changed = true;
+  }
+  if (activeTouches.size) {
+    activeTouches.clear();
+    changed = true;
+  }
+  if (changed) syncOpenState();
+}
+
+/** Native touch — most reliable inside Cargo iframes on iOS/Android. */
+function onTouchStart(e) {
+  for (const t of e.changedTouches) activeTouches.add(t.identifier);
+  syncOpenState();
+  e.preventDefault();
+}
+
+function onTouchEnd(e) {
+  for (const t of e.changedTouches) activeTouches.delete(t.identifier);
+  syncOpenState();
+  e.preventDefault();
+}
+
+/** Pointer fallback (pen / browsers that prefer pointer events). */
 function isFingerPointer(e) {
   return e.pointerType === "touch" || e.pointerType === "pen";
 }
 
 function onPointerDown(e) {
   if (!isFingerPointer(e)) return;
+  // Prefer touch events when available; skip duplicate pointer tracking
+  if (e.pointerType === "touch") return;
   activeTouches.add(e.pointerId);
   syncOpenState();
   try {
@@ -221,6 +249,7 @@ function onPointerDown(e) {
 }
 
 function onPointerUp(e) {
+  if (e.pointerType === "touch") return;
   if (!activeTouches.has(e.pointerId)) return;
   activeTouches.delete(e.pointerId);
   syncOpenState();
@@ -229,20 +258,19 @@ function onPointerUp(e) {
 
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
+
+const touchOpts = { passive: false, capture: true };
+window.addEventListener("touchstart", onTouchStart, touchOpts);
+window.addEventListener("touchend", onTouchEnd, touchOpts);
+window.addEventListener("touchcancel", onTouchEnd, touchOpts);
+
 app.addEventListener("pointerdown", onPointerDown, { passive: false });
 app.addEventListener("pointerup", onPointerUp, { passive: false });
 app.addEventListener("pointercancel", onPointerUp, { passive: false });
-window.addEventListener("blur", () => {
-  let changed = false;
-  if (spaceHeld) {
-    spaceHeld = false;
-    changed = true;
-  }
-  if (activeTouches.size) {
-    activeTouches.clear();
-    changed = true;
-  }
-  if (changed) syncOpenState();
+
+window.addEventListener("blur", releaseAllHolds);
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) releaseAllHolds();
 });
 
 document.addEventListener("gesturestart", (e) => e.preventDefault(), { passive: false });

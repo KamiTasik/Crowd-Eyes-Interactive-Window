@@ -12,6 +12,7 @@ body {
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+  touch-action: none;
 }
 
 .app {
@@ -22,6 +23,7 @@ body {
   width: 100%;
   outline: none;
   touch-action: none;
+  position: relative;
 }
 
 .stage-wrap {
@@ -32,6 +34,7 @@ body {
   justify-content: center;
   overflow: hidden;
   padding: 0.5rem;
+  touch-action: none;
 }
 
 /* A4 landscape frame — letterboxed in the viewport */
@@ -42,6 +45,7 @@ body {
   max-height: calc(100dvh - 3rem);
   background: #fff;
   overflow: hidden;
+  touch-action: none;
 }
 
 /* Eye animations sit under the drawing and show through your cutouts */
@@ -121,22 +125,46 @@ body {
   border: 0;
 }
 
-/* Compact layout for phones / short Cargo embeds */
+/* Full-bleed drawing on phones / short Cargo embeds */
 @media (max-width: 700px), (max-height: 520px) {
+  html,
+  body,
+  .app {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .app {
+    /* Height = A4 width-driven stage only; hint overlays */
+    display: block;
+  }
+
   .stage-wrap {
-    padding: 0.1rem 0.2rem 0;
-    align-items: flex-start;
+    padding: 0;
+    display: block;
+    flex: none;
+    overflow: visible;
   }
 
   .stage {
     width: 100%;
+    max-width: none;
     max-height: none;
-    /* Width drives height via aspect-ratio — no tall empty letterbox */
+    aspect-ratio: 3508 / 2480;
   }
 
   .hint {
-    padding: 0.2rem 0.4rem 0.3rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    padding: 0.35rem 0.5rem;
     font-size: 0.62rem;
     letter-spacing: 0.1em;
+    color: rgba(0, 0, 0, 0.55);
+    background: linear-gradient(transparent, rgba(255, 255, 255, 0.75));
+    pointer-events: none;
   }
 }

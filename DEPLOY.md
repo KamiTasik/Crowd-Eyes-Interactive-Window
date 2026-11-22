@@ -51,18 +51,25 @@ Test:
   display: block;
   overflow: hidden;
   background: #fff;
+  /* Helps touch reach the iframe content on some mobile browsers */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 @media (max-width: 700px) {
   [id="Q0080224726"] .crowd-eyes-embed-frame {
-    /* Fit the A4 drawing + short hint — no tall empty gap under page text */
-    height: calc(100vw / 1.41421356237 + 2rem);
-    max-height: 58vw;
+    /* Edge-to-edge A4: full phone width, height from aspect ratio */
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    height: calc(100vw / 1.41421356237);
+    max-height: none;
   }
 }
 ```
 
-4. Publish Cargo and test on the live page. On a phone, tap inside the iframe, then press and hold.
+4. Publish Cargo and test on the live page. On a phone, press and hold on the drawing.
 
 ## Part 4 — Later changes
 

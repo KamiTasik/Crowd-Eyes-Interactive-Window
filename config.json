@@ -14,14 +14,14 @@
       "id": "fig1",
       "label": "Figure 1",
       "pack": "woman",
-      "cx": 0.129,
+      "cx": 0.136,
       "cy": 0.1335,
       "width": 0.078,
       "height": 0.1,
       "fit": {
-        "scale": 0.72,
+        "scale": 0.55,
         "rotate": 0,
-        "dx": 0.12,
+        "dx": 0.18,
         "dy": 0.0,
         "tx": 0.0,
         "ty": 0.02
@@ -87,13 +87,13 @@
       "id": "fig6",
       "label": "Figure 6",
       "pack": "man",
-      "cx": 0.862,
+      "cx": 0.602,
       "cy": 0.15278,
       "width": 0.07554,
       "height": 0.07903,
       "fit": {
         "scale": 0.94,
-        "dx": 0.08,
+        "dx": 0.06,
         "dy": 0.0,
         "tx": 0.0,
         "ty": 0.0

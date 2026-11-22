@@ -130,8 +130,8 @@ async function setup() {
       img.style.transform = transforms.join(" ");
       img.style.transformOrigin = "center center";
     }
-    // Let rotated plates extend past the slot; the drawing layer masks them
-    if (rotate) slot.style.overflow = "visible";
+    // Let scaled/rotated/shifted plates extend; drawing cutouts mask them
+    if (rotate || scale !== 1 || dx || dy) slot.style.overflow = "visible";
     slot.appendChild(img);
     eyesRoot.appendChild(slot);
 

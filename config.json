@@ -14,14 +14,14 @@
       "id": "fig1",
       "label": "Figure 1",
       "pack": "woman",
-      "cx": 0.136,
+      "cx": 0.90,
       "cy": 0.1335,
       "width": 0.078,
       "height": 0.1,
       "fit": {
-        "scale": 0.55,
+        "scale": 1.5,
         "rotate": 0,
-        "dx": 0.18,
+        "dx": 0.01,
         "dy": 0.0,
         "tx": 0.0,
         "ty": 0.02

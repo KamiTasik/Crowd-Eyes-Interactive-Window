@@ -32,4 +32,8 @@ Open http://127.0.0.1:8766
 
 https://kamitasik.github.io/Crowd-Eyes-Interactive-Window/
 
+**Important:** the live page is served from the GitHub repo  
+`KamiTasik/Crowd-Eyes-Interactive-Window` (branch `main`).  
+Editing `config.json` only in Cursor / another clone does nothing on that URL until you **commit and push to that GitHub repo**. Then hard-refresh (`Cmd+Shift+R`) or open with `?open=1&t=1`.
+
 See **DEPLOY.md** for the Cargo embed.

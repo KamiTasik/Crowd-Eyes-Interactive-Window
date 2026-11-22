@@ -90,7 +90,8 @@ async function loadPack(pack) {
 }
 
 async function setup() {
-  config = await fetch("./config.json", { cache: "no-store" }).then((r) => r.json());
+  // Bust CDN/browser cache so config.json edits show up on refresh
+  config = await fetch(`./config.json?t=${Date.now()}`, { cache: "no-store" }).then((r) => r.json());
   const openMs = config.interaction?.openMs ?? 350;
   const closeMs = config.interaction?.closeMs ?? 280;
   const params = new URLSearchParams(location.search);

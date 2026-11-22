@@ -1,6 +1,6 @@
 /**
  * Crowd Eyes — Cargo / GitHub Pages web adaptation
- * Hold pointer or key → open all animated eyes; release → close.
+ * Hold Space → open all animated eyes; release → close.
  * Slots use alignment-window coordinates; pack frames are used as-is.
  */
 
@@ -11,10 +11,12 @@ const eyesRoot = document.getElementById("eyes");
 
 /** @type {Map<string, { frames: HTMLImageElement[], index: number, open: boolean, animating: boolean, img: HTMLImageElement, openMs: number, closeMs: number }>} */
 const players = new Map();
-const activePointers = new Set();
-let keysDown = 0;
+let spaceHeld = false;
 let eyesOpen = false;
 let config = null;
+
+const HINT_IDLE = "Hold Space";
+const HINT_OPEN = "Holding Space — eyes open";
 
 function setStatus(t) {
   if (statusEl) statusEl.textContent = t;
@@ -54,13 +56,13 @@ function animateFigure(id, open) {
 }
 
 function syncOpenState() {
-  const open = activePointers.size > 0 || keysDown > 0;
+  const open = spaceHeld;
   if (open === eyesOpen) return;
   eyesOpen = open;
   app.classList.toggle("is-open", open);
   document.getElementById("stage")?.setAttribute("data-open", open ? "true" : "false");
   if (hintEl) {
-    hintEl.textContent = open ? "Holding — eyes open" : "Press & hold · or hold a key";
+    hintEl.textContent = open ? HINT_OPEN : HINT_IDLE;
   }
   for (const id of players.keys()) animateFigure(id, open);
 }
@@ -164,54 +166,40 @@ async function setup() {
   app.focus();
 
   if (forceOpen) {
-    keysDown = 1;
+    spaceHeld = true;
     syncOpenState();
   }
 }
 
-function onPointerDown(e) {
-  activePointers.add(e.pointerId);
-  syncOpenState();
-  try {
-    app.setPointerCapture(e.pointerId);
-  } catch {
-    /* ignore */
-  }
-  e.preventDefault();
-}
-
-function onPointerUp(e) {
-  activePointers.delete(e.pointerId);
-  syncOpenState();
-  e.preventDefault();
+function isSpace(e) {
+  return e.code === "Space" || e.key === " " || e.key === "Spacebar";
 }
 
 function onKeyDown(e) {
-  if (e.repeat || e.metaKey || e.ctrlKey || e.altKey) return;
-  keysDown += 1;
-  syncOpenState();
+  if (!isSpace(e)) return;
   e.preventDefault();
+  if (e.repeat || spaceHeld) return;
+  spaceHeld = true;
+  syncOpenState();
 }
 
 function onKeyUp(e) {
-  keysDown = Math.max(0, keysDown - 1);
-  syncOpenState();
+  if (!isSpace(e)) return;
   e.preventDefault();
+  if (!spaceHeld) return;
+  spaceHeld = false;
+  syncOpenState();
 }
 
-app.addEventListener("pointerdown", onPointerDown, { passive: false });
-app.addEventListener("pointerup", onPointerUp, { passive: false });
-app.addEventListener("pointercancel", onPointerUp, { passive: false });
 window.addEventListener("keydown", onKeyDown);
 window.addEventListener("keyup", onKeyUp);
 window.addEventListener("blur", () => {
-  activePointers.clear();
-  keysDown = 0;
+  if (!spaceHeld) return;
+  spaceHeld = false;
   syncOpenState();
 });
 
 document.addEventListener("gesturestart", (e) => e.preventDefault(), { passive: false });
-document.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
 
 setup().catch((err) => {
   setStatus("Load error");

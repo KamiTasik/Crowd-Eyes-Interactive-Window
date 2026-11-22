@@ -2,7 +2,7 @@
 
 Browser adaptation of the Crowd Eyes installation for Cargo / GitHub Pages.
 
-Hold the trackpad, mouse, or a key to open the eyes; release to close.
+Hold **Space** to open the eyes; release to close.
 
 The A4 drawing PNG is used **as provided** (your eye cutouts are not modified). Eye frames are copied into packs unchanged. `config.json` only stores alignment-window coordinates for placement.
 

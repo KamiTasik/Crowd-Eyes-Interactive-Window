@@ -19,7 +19,7 @@ Repo: `https://github.com/KamiTasik/Crowd-Eyes-Interactive-Window`
 **Live URL:**  
 `https://kamitasik.github.io/Crowd-Eyes-Interactive-Window/`
 
-Test: hold trackpad or a key → eyes open; release → close.
+Test: hold Space → eyes open; release → close.
 
 ## Part 3 — Embed on Cargo
 
@@ -60,5 +60,5 @@ Test: hold trackpad or a key → eyes open; release → close.
 ## Notes
 
 - Drawing is **A4 landscape**.  
-- No camera on this page — hold interaction only.  
+- No camera on this page — Space-bar hold only.  
 - GitHub Pages provides **HTTPS** for Cargo iframes.

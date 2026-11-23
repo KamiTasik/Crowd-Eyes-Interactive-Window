@@ -16,7 +16,8 @@ python3 -m http.server 8766 --bind 127.0.0.1
 Open http://127.0.0.1:8766
 
 - `?debug=1` — show placement windows  
-- `?open=1` — force eyes open
+- `?open=1` — force eyes open  
+- `?auto=1` — sporadic auto-blink for documentation (see `macmini-auto-blink.command`)
 
 ## Pack map (left → right)
 

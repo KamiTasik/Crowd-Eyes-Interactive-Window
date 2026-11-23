@@ -2,6 +2,7 @@
  * Crowd Eyes — Cargo / GitHub Pages web adaptation
  * Desktop: hold Space → eyes open; release → close.
  * Mobile: hold finger on screen → eyes open; lift → close.
+ * Documentation: ?auto=1 → sporadic random blinks (no webcam).
  * Slots use alignment-window coordinates; pack frames are used as-is.
  */
 
@@ -15,6 +16,8 @@ const players = new Map();
 let spaceHeld = false;
 /** @type {Set<number>} */
 const activeTouches = new Set();
+let autoBlinkOpen = false;
+let autoBlinkMode = false;
 let eyesOpen = false;
 let config = null;
 
@@ -22,8 +25,16 @@ const isTouchUi =
   window.matchMedia("(hover: none) and (pointer: coarse)").matches ||
   navigator.maxTouchPoints > 0;
 
-const HINT_IDLE = isTouchUi ? "Press & hold" : "Hold Space";
-const HINT_OPEN = isTouchUi ? "Holding — eyes open" : "Holding Space — eyes open";
+let HINT_IDLE = isTouchUi ? "Press & hold" : "Hold Space";
+let HINT_OPEN = isTouchUi ? "Holding — eyes open" : "Holding Space — eyes open";
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function rand(min, max) {
+  return min + Math.random() * (max - min);
+}
 
 function setStatus(t) {
   if (statusEl) statusEl.textContent = t;
@@ -63,7 +74,7 @@ function animateFigure(id, open) {
 }
 
 function syncOpenState() {
-  const open = spaceHeld || activeTouches.size > 0;
+  const open = spaceHeld || activeTouches.size > 0 || autoBlinkOpen;
   if (open === eyesOpen) return;
   eyesOpen = open;
   app.classList.toggle("is-open", open);
@@ -72,6 +83,55 @@ function syncOpenState() {
     hintEl.textContent = open ? HINT_OPEN : HINT_IDLE;
   }
   for (const id of players.keys()) animateFigure(id, open);
+}
+
+/** One blink: open briefly, then close. Skips if user is holding. */
+async function blinkOnce() {
+  if (spaceHeld || activeTouches.size > 0) return;
+  autoBlinkOpen = true;
+  syncOpenState();
+  await sleep(rand(160, 520));
+  if (spaceHeld || activeTouches.size > 0) {
+    autoBlinkOpen = false;
+    return;
+  }
+  autoBlinkOpen = false;
+  syncOpenState();
+}
+
+/**
+ * Sporadic documentation blinks — random gaps, open time, occasional double-blink.
+ * Enable with ?auto=1 or ?blink=1
+ */
+function startAutoBlink() {
+  autoBlinkMode = true;
+  HINT_IDLE = "Auto blink · documentation";
+  HINT_OPEN = "Blinking";
+  if (hintEl) hintEl.textContent = HINT_IDLE;
+  app.setAttribute("aria-label", "Automatic blinking for documentation");
+
+  async function loop() {
+    while (autoBlinkMode) {
+      await sleep(rand(1400, 4200));
+      if (!autoBlinkMode) break;
+      await blinkOnce();
+      // ~30% chance of a quick double-blink
+      if (Math.random() < 0.3) {
+        await sleep(rand(70, 160));
+        await blinkOnce();
+      }
+      // Rare longer open stare (~8%)
+      if (Math.random() < 0.08 && !spaceHeld && activeTouches.size === 0) {
+        await sleep(rand(400, 900));
+        autoBlinkOpen = true;
+        syncOpenState();
+        await sleep(rand(600, 1600));
+        autoBlinkOpen = false;
+        syncOpenState();
+      }
+    }
+  }
+  loop();
 }
 
 async function loadImage(src) {
@@ -106,13 +166,14 @@ async function setup() {
   const params = new URLSearchParams(location.search);
   const debug = params.get("debug") === "1";
   const forceOpen = params.get("open") === "1";
+  const autoBlink = params.get("auto") === "1" || params.get("blink") === "1";
   const debugOverlay = document.getElementById("debugOverlay");
   if (debug && debugOverlay) {
     debugOverlay.hidden = false;
   }
 
   if (hintEl) hintEl.textContent = HINT_IDLE;
-  if (isTouchUi) {
+  if (isTouchUi && !autoBlink) {
     app.setAttribute("aria-label", "Press and hold the screen to open the eyes");
   }
 
@@ -177,9 +238,13 @@ async function setup() {
   setStatus("Ready");
   app.focus();
 
-  if (forceOpen) {
+  if (forceOpen && !autoBlink) {
     spaceHeld = true;
     syncOpenState();
+  }
+
+  if (autoBlink) {
+    startAutoBlink();
   }
 }
 
